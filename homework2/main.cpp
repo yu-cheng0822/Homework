@@ -2,7 +2,7 @@
 #include <cmath>   
 #include <algorithm> 
 using namespace std;
-class Polynomial;
+class Polynomial; //為了讓Term類別可以找到Polynomial類別
 class Term {
 	friend Polynomial;
 public:
@@ -11,47 +11,47 @@ public:
 };
 class Polynomial {
 private:
-	Term* termArray;
+	Term* termArray; //宣告一個名為 termArray 的指標，型別是 Term*
 	int capacity;
 	int terms;
 public:
 	Polynomial() :capacity(2), terms(0) {
-		termArray = new Term[capacity];
+		termArray = new Term[capacity]; //配置 capacity 個連續的 Term 物件給 termArray
 	}
 
 	~Polynomial() { 
-		delete[] termArray;
+		delete[] termArray; //清除
 	}
 	void look(int n) {
-		if (capacity >= n)return;
-		int c = max(capacity * 2, n);
+		if (capacity >= n)return;//足夠容量就直接離開
+		int c = max(capacity * 2, n);//足夠容量就直接離開
 		Term* temp = new Term[c];
-		copy(termArray, termArray + terms, temp);
+		copy(termArray, termArray + terms, temp);//現有 terms 個元素複製到新陣列
 		delete[]termArray;
-		termArray = temp;
-		capacity = c;
+		termArray = temp;//指向新陣列
+		capacity = c;//更新容量
 	}
 	Polynomial Add(const Polynomial &poly) {
 		Polynomial result;
 		for (int i = 0; i < terms; i++) {
-			result.newTerm(termArray[i].coef, termArray[i].exp);
+			result.newTerm(termArray[i].coef, termArray[i].exp);//目前物件中所有的項逐一加入到 result。
 		}
 		for (int j = 0; j < poly.terms; j++) {
 			int exp = poly.termArray[j].exp;
 			double coef = poly.termArray[j].coef;
 			int find = 0;
 			for (int i = 0; i < result.terms; i++) {
-				if (result.termArray[i].exp == exp)
+				if (result.termArray[i].exp == exp) //如果指數相同
 				{
-					result.termArray[i].coef += coef;
+					result.termArray[i].coef += coef; //相加
 					find = 1;
 				}
 			}
-			if (find == 0 && coef != 0) {
+			if (find == 0 && coef != 0) { //如果沒找到並且係數不為0
 				result.look(result.terms + 1);
 				result.termArray[result.terms].coef = coef;
 				result.termArray[result.terms].exp = exp;
-				result.terms++;
+				result.terms++;//新增一項
 			}
 		}
 		return result;
@@ -69,11 +69,11 @@ public:
 						find = 1;
 					}
 				}
-				if (!find && coef != 0) {
+				if (find==0 && coef != 0) {
 					result.look(result.terms + 1);
 					result.termArray[result.terms].coef = coef;
 					result.termArray[result.terms].exp = exp;
-					result.terms++;
+					result.terms++;//新增一項
 				}
 			}
 		}
