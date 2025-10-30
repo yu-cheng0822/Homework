@@ -8,10 +8,37 @@
 
 ### 解題策略
 
-1. 使用遞迴函式將問題拆解為更小的子問題：
-   $$\Sigma(n) = n + \Sigma(n-1)$$
-2. 當 $n \leq 1$ 時，返回 $n$ 作為遞迴的結束條件。  
-3. 主程式呼叫遞迴函式，並輸出計算結果。
+1. class Term
+儲存單一項的資料結構：float coef; int exp;。
+
+2. Polynomial::Polynomial()
+建構子：初始化動態陣列（初始 capacity = 2）與項數為 0。
+
+3. Polynomial::~Polynomial()
+解構子：釋放動態配置的 termArray。
+
+4. void Polynomial::look(int n)
+確保內部陣列至少有容量 n，不足時擴增並複製既有項目。
+
+5. void Polynomial::newTerm(const float newcoef, int newexp)
+新增一項（跳過係數為 0），若容量不足自動擴增並將項附加到陣列末端。
+
+6. Polynomial Polynomial::Add(const Polynomial &poly)
+回傳兩多項式相加的結果：先複製目前物件的項，再把 poly 的項合併（相同指數則累加係數）。
+
+7. Polynomial Polynomial::mult(const Polynomial &poly)
+回傳兩多項式相乘的結果：對每對項做相乘（係數相乘、指數相加），合併相同指數的項。
+
+8. float Polynomial::Eval(float f)
+在 x = f 評值多項式，對每項計算 coef * pow(f, exp) 並累加回傳總和。
+
+9. istream& operator>>(istream& in, Polynomial& poly)
+從輸入讀入多項式：先讀入項數 n，接著讀 n 組 coef exp 並呼叫 newTerm 插入。
+
+10. ostream& operator<<(ostream& out, const Polynomial& poly)
+輸出多項式為可讀字串：處理正負號與指數為 0 的情況，依陣列順序輸出每一項。
+
+
 
 ## 程式實作
 
@@ -162,68 +189,38 @@ int main() {
 ```
 
 ## 效能分析
-
-1. 時間複雜度：程式的時間複雜度為 $O(\log n)$。
-2. 空間複雜度：空間複雜度為 $O(100\times \log n + \pi)$。
+| 函式 | 時間複雜度 | 空間複雜度 |
+|:---:|:---:|:---:|
+| Constructor / Destructor | O(1) | O(1) |
+| look(int n) |  O(1) |  O(capacity) | 
+| newTerm(const float, int) | O(1) | O(1) | 
+| Add(const Polynomial&) | O(m*n + m^2) | O(n + m) |
+| mult(const Polynomial&) | O((n*m)^2) | O(n * m) |
+| Eval(float) | O(n)（若 pow 當 O(1)） | O(1) | 
+| operator>>(istream&, Polynomial&) | O(k) | O(k) | 
+| operator<<(ostream&, const Polynomial&) | O(n) | O(1) | 
+| main（整體） | O(m*n + m^2 + (n*m)^2 + n) | O(n*m + n + m) | 
 
 ## 測試與驗證
 
 ### 測試案例
 
-| 測試案例 | 輸入參數 $n$ | 預期輸出 | 實際輸出 |
-|----------|--------------|----------|----------|
-| 測試一   | $n = 0$      | 0        | 0        |
-| 測試二   | $n = 1$      | 1        | 1        |
-| 測試三   | $n = 3$      | 6        | 6        |
-| 測試四   | $n = 5$      | 15       | 15       |
-| 測試五   | $n = -1$     | 異常拋出 | 異常拋出 |
+| 測試案例 | 輸入參數  |
+|----------|--------------|
+| 測試一   | <img width="397" height="291" alt="image" src="https://github.com/user-attachments/assets/cd0f8d9b-4ae8-46ec-9f5b-c2cf2756b112" />     | 
+| 測試二   |   <img width="364" height="275" alt="image" src="https://github.com/user-attachments/assets/0839cd87-4566-446b-85dc-6a7ff6be871c" /> | 
 
-### 編譯與執行指令
 
-```shell
-$ g++ -std=c++17 -o sigma sigma.cpp
-$ ./sigma
-6
-```
+
 
 ### 結論
+1. 功能正確：程式實作了 Polynomial 類別，新增項（newTerm）、相加（Add）、相乘（mult）、附值（Eval）以及輸入/輸出運算子，能完成多項式的基本運算與顯示。
+2. 記憶體管理：使用動態陣列（look/newTerm），可正確保留既有項目並避免儲存係數為 0 的項。
+3. 複雜度摘要（設 n = this.terms, m = poly.terms）：
+Add：O(m*n + m^2)，空間 O(n + m)。
+mult： O((nm)^2)，空間 O(nm)。
+Eval：O(n)，空間 O(1)。
 
-1. 程式能正確計算 $n$ 到 $1$ 的連加總和。  
-2. 在 $n < 0$ 的情況下，程式會成功拋出異常，符合設計預期。  
-3. 測試案例涵蓋了多種邊界情況（$n = 0$、$n = 1$、$n > 1$、$n < 0$），驗證程式的正確性。
-
-## 申論及開發報告
-
-### 選擇遞迴的原因
-
-在本程式中，使用遞迴來計算連加總和的主要原因如下：
-
-1. **程式邏輯簡單直觀**  
-   遞迴的寫法能夠清楚表達「將問題拆解為更小的子問題」的核心概念。  
-   例如，計算 $\Sigma(n)$ 的過程可分解為：  
-
-   $$
-   \Sigma(n) = n + \Sigma(n-1)
-   $$
-
-   當 $n$ 等於 1 或 0 時，直接返回結果，結束遞迴。
-
-2. **易於理解與實現**  
-   遞迴的程式碼更接近數學公式的表示方式，特別適合新手學習遞迴的基本概念。  
-   以本程式為例：  
-
-   ```cpp
-   int sigma(int n) {
-       if (n < 0)
-           throw "n < 0";
-       else if (n <= 1)
-           return n;
-       return n + sigma(n - 1);
-   }
-   ```
-
-3. **遞迴的語意清楚**  
-   在程式中，每次遞迴呼叫都代表一個「子問題的解」，而最終遞迴的返回結果會逐層相加，完成整體問題的求解。  
-   這種設計簡化了邏輯，不需要額外變數來維護中間狀態。
-
-透過遞迴實作 Sigma 計算，程式邏輯簡單且易於理解，特別適合展示遞迴的核心思想。然而，遞迴會因堆疊深度受到限制，當 $n$ 值過大時，應考慮使用迭代版本來避免 Stack Overflow 問題。
+## 心得討論
+在寫add 和 mult函式時出現了"block 0x000001e5087e9dd0"這個錯誤導致無法成功執行 上網查資料說C++ 預設是「淺拷貝」，容易導致記憶體重複刪除。
+因此改成用「指標參考」傳遞，而不是「值傳遞」這樣就能解決問題;
