@@ -96,10 +96,10 @@ public:
 				}
 			}
 			if (find == 0 && coef != 0) { //如果沒找到並且係數不為0
-				result.look(result.terms + 1);
-				result.termArray[result.terms].coef = coef;
+				result.look(result.terms + 1);//新增一項
+				result.termArray[result.terms].coef = coef;//把值放進去
 				result.termArray[result.terms].exp = exp;
-				result.terms++;//新增一項
+				result.terms++;
 			}
 		}
 		return result;
@@ -118,10 +118,10 @@ public:
 					}
 				}
 				if (find==0 && coef != 0) {
-					result.look(result.terms + 1);
-					result.termArray[result.terms].coef = coef;
+					result.look(result.terms + 1);//新增一項
+					result.termArray[result.terms].coef = coef;//把值放進去
 					result.termArray[result.terms].exp = exp;
-					result.terms++;//新增一項
+					result.terms++;
 				}
 			}
 		}
@@ -137,11 +137,11 @@ public:
 	void newTerm(const float newcoef, int newexp) {
 		if (newcoef == 0)return;
 		if (terms == capacity) {
-			capacity *= 2;
-			Term* temp = new Term[capacity];
-			copy(termArray, termArray + terms, temp);
-			delete[]termArray;
-			termArray = temp;
+			capacity *= 2;//把容量變為原來的兩倍
+			Term* temp = new Term[capacity];//新的動態記憶
+			copy(termArray, termArray + terms, temp);//將舊的資料放去新的
+			delete[]termArray;//把舊資料刪除
+			termArray = temp;//新資料放到舊資料的位址
 		}
 		termArray[terms].coef = newcoef;
 		termArray[terms].exp = newexp;
