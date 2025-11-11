@@ -188,7 +188,7 @@ int main() {
 
 ```
 
-## 效能分析
+## 效能分析AI分析
 | 函式 | 時間複雜度 | 空間複雜度 |
 |:---:|:---:|:---:|
 | Constructor / Destructor | O(1) | O(1) |
@@ -200,7 +200,7 @@ int main() {
 | operator>>(istream&, Polynomial&) | O(k) | O(k) | 
 | operator<<(ostream&, const Polynomial&) | O(n) | O(1) | 
 | main（整體） | O(m*n + m^2 + (n*m)^2 + n) | O(n*m + n + m) | 
-AI分析
+
 
 ## 測試與驗證
 
