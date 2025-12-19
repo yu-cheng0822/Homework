@@ -395,8 +395,9 @@ int main() {
 
 | 測試案例 | 輸入參數  |
 |----------|--------------|
-| 測試一   | <img width="397" height="291" alt="image" src="https://github.com/user-attachments/assets/cd0f8d9b-4ae8-46ec-9f5b-c2cf2756b112" />     | 
-| 測試二   |   <img width="364" height="275" alt="image" src="https://github.com/user-attachments/assets/0839cd87-4566-446b-85dc-6a7ff6be871c" /> | 
+| 測試一   | <img width="515" height="287" alt="image" src="https://github.com/user-attachments/assets/68da1ab6-8f5b-4dab-9e21-68683ea9ce9e" />   | 
+| 測試二   |   <img width="997" height="373" alt="image" src="https://github.com/user-attachments/assets/fee4f021-1876-42c1-b876-2e1fbad45f80" />
+ | 
 
 
 
@@ -439,6 +440,7 @@ int main() {
 一開始看似只是進行多項式的加減乘運算，
 實際實作後才體會到底層資料結構的選擇，
 會直接影響程式的設計方式與整體效能。
+
 
 
 
