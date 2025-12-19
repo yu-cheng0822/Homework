@@ -40,7 +40,7 @@
 
 9. Polynomial Polynomial::operator+(const Polynomial& poly)  
    多項式加法：  
-   透過同時走訪兩個已排序的串列，類似 merge 的方式合併項目，  
+   透過同時走訪兩個已排序的串列，  
    相同次方的項則合併係數，回傳新的多項式結果。
 
 10. Polynomial Polynomial::operator-(const Polynomial& poly)  
@@ -439,5 +439,6 @@ int main() {
 一開始看似只是進行多項式的加減乘運算，
 實際實作後才體會到底層資料結構的選擇，
 會直接影響程式的設計方式與整體效能。
+
 
 
