@@ -6,38 +6,39 @@
 
 二元樹搜尋
 
-### 解題策略
+## 解題策略  
 
-1. class Term
-儲存單一項的資料結構：float coef; int exp;。
+1. Node 結構  
+   每個節點包含：
+   int key：儲存資料  
+    Node* left：左子節點  
+    Node* right：右子節點  
 
-2. Polynomial::Polynomial()
-建構子：初始化動態陣列（初始 capacity = 2）與項數為 0。
+2. insert() 
+   使用遞迴方式：
+    若 key 較小  插入左子樹  
+    否則  插入右子樹  
 
-3. Polynomial::~Polynomial()
-解構子：釋放動態配置的 termArray。
+3. height()  
+   使用遞迴計算：
+    高度 = max(左子樹, 右子樹) + 1  
 
-4. void Polynomial::look(int n)
-確保內部陣列至少有容量 n，不足時擴增並複製既有項目。
+4. deleteNode()  
+   分三種情況：
+    無子節點 → 直接刪除  
+    一個子節點 → 用子節點取代  
+    兩個子節點 → 找右子樹最小值取代  
 
-5. void Polynomial::newTerm(const float newcoef, int newexp)
-新增一項（跳過係數為 0），若容量不足自動擴增並將項附加到陣列末端。
+5. findMin() 
+   找右子樹最小值（最左節點）  
 
-6. Polynomial Polynomial::Add(const Polynomial &poly)
-回傳兩多項式相加的結果：先複製目前物件的項，再把 poly 的項合併（相同指數則累加係數）。
+6. clear()  
+   使用後序走訪刪除所有節點（避免記憶體洩漏）  
 
-7. Polynomial Polynomial::mult(const Polynomial &poly)
-回傳兩多項式相乘的結果：對每對項做相乘（係數相乘、指數相加），合併相同指數的項。
-
-8. float Polynomial::Eval(float f)
-在 x = f 評值多項式，對每項計算 coef * pow(f, exp) 並累加回傳總和。
-
-9. istream& operator>>(istream& in, Polynomial& poly)
-從輸入讀入多項式：先讀入項數 n，接著讀 n 組 coef exp 並呼叫 newTerm 插入。
-
-10. ostream& operator<<(ostream& out, const Polynomial& poly)
-輸出多項式為可讀字串：處理正負號與指數為 0 的情況，依陣列順序輸出每一項。
-
+7. 主程式測試 
+    建立不同大小的 BST  
+    計算高度與 log₂(n) 比值  
+    測試刪除節點前後的變化  
 
 
 ## 程式實作
@@ -191,23 +192,37 @@ int main() {
 
 ```
 
-## 效能分析(AI分析)
+## 效能分析 (AI分析)
+
+設 n 為樹中節點數，h 為樹高。
+
 | 函式 | 時間複雜度 | 空間複雜度 |
 |:---:|:---:|:---:|
-| Constructor / Destructor | O(1) | O(1) |
-| look(int n) |  O(1) |  O(capacity) | 
-| newTerm(const float, int) | O(1) | O(1) | 
-| Add(const Polynomial&) | O(m*n + m^2) | O(n + m) |
-| mult(const Polynomial&) | O((n*m)^2) | O(n * m) |
-| Eval(float) | O(n)（若 pow 當 O(1)） | O(1) | 
-| operator>>(istream&, Polynomial&) | O(k) | O(k) | 
-| operator<<(ostream&, const Polynomial&) | O(n) | O(1) | 
-| main（整體） | O(m*n + m^2 + (n*m)^2 + n) | O(n*m + n + m) | 
+| insert | O(h) | O(h) |
+| height | O(n) | O(h) |
+| delete | O(h) | O(h) |
+| findMin | O(h) | O(1) |
+| clear | O(n) | O(h) |
+| main（整體） | 平均 O(n log n)，最壞 O(n²) | O(n) |
 
+### 複雜度說明
+1. 在隨機情況下，BST 高度 h ≈ log₂(n)，因此：
+    insert / delete 約為 O(log n)
+2. 在最壞情況（資料已排序）下：
+    BST 會退化成鏈結串列
+    h = n，因此操作為 O(n)
+3. height() 必須走訪所有節點，因此為 O(n)
 
-## 測試與驗證
+---
 
-### 測試案例
+## 測試與驗證  
+
+### 測試方式  
+1. 使用亂數產生 n 筆資料插入 BST  
+2. 計算樹高 h  
+3. 比較 h / log₂(n)  
+
+### 測試結果（範例）
 
 | 測試案例 | 輸入參數  |
 |----------|--------------|
