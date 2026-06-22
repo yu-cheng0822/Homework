@@ -1,46 +1,68 @@
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-#include <ctime>
-#include <algorithm>
-#include <iomanip>
-#include <string>
+#include <iostream>      
+#include <vector>        
+#include <cstdlib>       
+#include <ctime>         
+#include <algorithm>     
+#include <iomanip>       
+#include <string>        
 
-using namespace std;
+using namespace std;     
 
-// (a) Insertion
-void insertionSort(vector<int>& a) {
-    for (int i = 1; i < a.size(); i++) {
-        int key = a[i], j = i - 1;
-        while (j >= 0 && a[j] > key) {
-            a[j + 1] = a[j];
-            j--;
+// (a) Insertion Sort
+void insertionSort(vector<int>& a) {          // 插入排序函式
+    for (int i = 1; i < a.size(); i++) {      // 從第 2 個元素開始
+        int key = a[i], j = i - 1;            // key 為待插入元素，j 指向前一個元素
+
+        while (j >= 0 && a[j] > key) {        // 若前面元素較大
+            a[j + 1] = a[j];                  // 元素往右移
+            j--;                              // 往前比較
         }
-        a[j + 1] = key;
+
+        a[j + 1] = key;                       // 插入正確位置
     }
 }
 
-// (b) Quick
+// (b) Quick Sort
+
 int partition(vector<int>& a, int low, int high) {
-    int randomIndex = low + rand() % (high - low + 1);
-    swap(a[randomIndex], a[high]);
-    int pivot = a[high], i = low - 1;
+    // 1. 找出中點
+    int mid = low + (high - low) / 2;
+
+    // 2. 將 low, mid, high 三個位置的數排序，讓中位數跑到 mid
+    if (a[low] > a[mid]) swap(a[low], a[mid]);
+    if (a[low] > a[high]) swap(a[low], a[high]);
+    if (a[mid] > a[high]) swap(a[mid], a[high]);
+
+    // 3. 把位於 mid 的中位數（Pivot）換到最後面（high），配合你原本的掃描邏輯
+    swap(a[mid], a[high]);
+
+    int pivot = a[high];
+    int i = low - 1; // 記錄較小元素區域
+
     for (int j = low; j < high; j++) {
-        if (a[j] <= pivot) swap(a[++i], a[j]);
+        if (a[j] <= pivot) {
+            swap(a[++i], a[j]); // 放到左側區域
+        }
     }
-    swap(a[i + 1], a[high]);
-    return i + 1;
+
+    swap(a[i + 1], a[high]); // Pivot 放回正確位置
+    return i + 1;            // 回傳 Pivot 位置
 }
 
 void quickSort(vector<int>& a, int low, int high) {
-    if (low < high) {
-        int pi = partition(a, low, high);
-        quickSort(a, low, pi - 1);
-        quickSort(a, pi + 1, high);
+
+    if (low < high) {                         // 區間長度大於1
+
+        int pi = partition(a, low, high);     // 分割
+
+        quickSort(a, low, pi - 1);            // 排序左半部
+
+        quickSort(a, pi + 1, high);           // 排序右半部
     }
 }
 
-// (c) Merge
+// (c) Merge Sort
+
 void mergeSort(vector<int>& a) {
 
     int n = a.size();
@@ -62,134 +84,161 @@ void mergeSort(vector<int>& a) {
     }
 }
 
-
 // (d) Heap Sort
+
 void heapSort(vector<int>& a) {
-    make_heap(a.begin(), a.end());
-    sort_heap(a.begin(), a.end());
+
+    make_heap(a.begin(), a.end());            // 建立最大堆疊
+
+    sort_heap(a.begin(), a.end());            // 堆疊排序
 }
 
-// 隨機打亂
+// 隨機打亂資料
+
 void permute(vector<int>& a, int n) {
-    a.resize(n);
-    for (int i = 0; i < n; i++) a[i] = i + 1;
-    for (int i = n - 1; i > 0; i--) {
-        swap(a[i], a[rand() % (i + 1)]);
+
+    a.resize(n);                              // 調整大小
+
+    for (int i = 0; i < n; i++)               // 產生 1~n
+        a[i] = i + 1;
+
+    for (int i = n - 1; i > 0; i--) {         // Fisher-Yates Shuffle
+
+        swap(a[i], a[rand() % (i + 1)]);      // 隨機交換
     }
 }
-
 int main() {
-    srand(time(NULL));
+
+    srand(time(NULL));                         // 使用目前時間作為亂數種子
 
     vector<int> n_values = { 500, 1000, 2000, 3000, 4000, 5000 };
-    const int RUNS = 10;
+    // 測試資料筆數
 
-    cout << setw(6) << "n"
+    const int RUNS = 10;                       // 平均情況重複測試次數
+
+    cout << setw(6) << "n"                     // 輸出表頭 n
         << " | " << setw(26) << "      Insertion Sort    "
         << " | " << setw(26) << "        Quick Sort      "
         << " | " << setw(26) << "        Merge Sort      "
         << " | " << setw(26) << "        Heap Sort       " << "\n";
-    cout << setw(6) << ""
+
+    cout << setw(6) << ""                      // 第二列標題
         << " | " << setw(8) << "Best" << setw(9) << "Avg" << setw(9) << "Worst"
         << " | " << setw(8) << "Best" << setw(9) << "Avg" << setw(9) << "Worst"
         << " | " << setw(8) << "Best" << setw(9) << "Avg" << setw(9) << "Worst"
         << " | " << setw(8) << "Best" << setw(9) << "Avg" << setw(9) << "Worst" << "\n";
-    cout << string(125, '-') << "\n";
 
-    for (int n : n_values) {
-        vector<int> data;
-        clock_t start;
+    cout << string(125, '-') << "\n";          
 
-        double ins_b, ins_a = 0, ins_w;
-        double q_b, q_a = 0, q_w;
-        double m_b, m_a = 0, m_w;
-        double h_b, h_a = 0, h_w;
+    for (int n : n_values) {                   // 逐一測試各種資料量
+        vector<int> data;                      // 儲存測試資料
+        clock_t start;                         // 計時起點
+        double ins_b, ins_a = 0, ins_w;        // Insertion 最好 平均 最差
+        double q_b, q_a = 0, q_w;             // Quick 最好 平均 最差
+        double m_b, m_a = 0, m_w;             // Merge 最好 平均 最差
+        double h_b, h_a = 0, h_w;             // Heap 最好 平均 最差
 
-        // 最好情況
-
-        vector<int> sorted_data(n);
-        for (int i = 0; i < n; i++) sorted_data[i] = i + 1;
-
-        data = sorted_data; 
-        start = clock(); 
-        insertionSort(data); 
+        // 最好情況 Best Case
+        vector<int> sorted_data(n);            // 建立已排序資料
+        for (int i = 0; i < n; i++)
+            sorted_data[i] = i + 1;           // 填入 1~n
+        data = sorted_data;                   // 複製資料
+        start = clock();                      // 開始計時
+        insertionSort(data);                  // 執行 Insertion Sort
         ins_b = double(clock() - start) / CLOCKS_PER_SEC;
-
-        data = sorted_data; 
-        start = clock(); 
-        mergeSort(data); 
+        // 計算執行時間
+        data = sorted_data;                   // 複製資料
+        start = clock();                      // 開始計時
+        mergeSort(data);                      // 執行 Merge Sort
         m_b = double(clock() - start) / CLOCKS_PER_SEC;
-
-        data = sorted_data; 
-        start = clock(); 
-        heapSort(data); 
+        // 計算執行時間
+        data = sorted_data;                   // 複製資料
+        start = clock();                      // 開始計時
+        heapSort(data);                       // 執行 Heap Sort
         h_b = double(clock() - start) / CLOCKS_PER_SEC;
-
-        permute(data, n); 
-        start = clock(); 
-        quickSort(data, 0, n - 1); 
+        // 計算執行時間
+        permute(data, n);                     // 產生隨機資料
+        start = clock();                      // 開始計時
+        quickSort(data, 0, n - 1);            // 執行 Quick Sort
         q_b = double(clock() - start) / CLOCKS_PER_SEC;
+        // 計算執行時間
 
-        // 最壞情況
-
-        vector<int> reverse_data(n);
-        for (int i = 0; i < n; i++) reverse_data[i] = n - i;
-        
-        data = reverse_data; 
-        start = clock(); 
-        insertionSort(data); 
+// 最壞情況 Worst Case
+        vector<int> reverse_data(n);          // 建立反向排序資料
+        for (int i = 0; i < n; i++)
+            reverse_data[i] = n - i;          // 填入 n~1
+        data = reverse_data;                  // 複製反向資料
+        start = clock();                      // 開始計時
+        insertionSort(data);                  // 執行 Insertion Sort
         ins_w = double(clock() - start) / CLOCKS_PER_SEC;
-
-        data = sorted_data; 
-        start = clock(); 
-        quickSort(data, 0, n - 1); 
+        // 計算執行時間
+        data = sorted_data;                   // 已排序資料
+        start = clock();                      // 開始計時
+        quickSort(data, 0, n - 1);            // 執行 Quick Sort
         q_w = double(clock() - start) / CLOCKS_PER_SEC;
-
-        data = reverse_data; 
-        start = clock(); 
-        mergeSort(data); 
+        // 計算執行時間
+        data = reverse_data;                  // 使用反向資料
+        start = clock();                      // 開始計時
+        mergeSort(data);                      // 執行 Merge Sort
         m_w = double(clock() - start) / CLOCKS_PER_SEC;
-
-        data = reverse_data; 
-        start = clock(); 
-        heapSort(data); 
+        // 計算執行時間
+        data = reverse_data;                  // 使用反向資料
+        start = clock();                      // 開始計時
+        heapSort(data);                       // 執行 Heap Sort
         h_w = double(clock() - start) / CLOCKS_PER_SEC;
+        // 計算執行時間
 
-        // 平均情況
+// 平均情況 Average Case
 
-        for (int i = 0; i < RUNS; i++) {
-            permute(data, n);
-            vector<int> temp;
-
-            temp = data; start = clock(); 
-            insertionSort(temp); 
+        for (int i = 0; i < RUNS; i++) {     
+            permute(data, n);                 // 產生隨機排列資料
+            vector<int> temp;                 // 暫存資料a
+            temp = data;                      // 複製資料
+            start = clock();                  // 開始計時
+            insertionSort(temp);              // 執行 Insertion Sort
             ins_a += double(clock() - start) / CLOCKS_PER_SEC;
-
-            temp = data; start = clock(); 
-            quickSort(temp, 0, n - 1);
+            // 累加時間
+            temp = data;                      // 複製資料
+            start = clock();                  // 開始計時
+            quickSort(temp, 0, n - 1);        // 執行 Quick Sort
             q_a += double(clock() - start) / CLOCKS_PER_SEC;
-
-            temp = data; start = clock();
-            mergeSort(temp); 
+            // 累加時間
+            temp = data;                      // 複製資料
+            start = clock();                  // 開始計時
+            mergeSort(temp);                  // 執行 Merge Sort
             m_a += double(clock() - start) / CLOCKS_PER_SEC;
-
-            temp = data; 
-            start = clock(); 
-            heapSort(temp); 
+            // 累加時間
+            temp = data;                      // 複製資料
+            start = clock();                  // 開始計時
+            heapSort(temp);                   // 執行 Heap Sort
             h_a += double(clock() - start) / CLOCKS_PER_SEC;
+            // 累加時間
         }
 
-        ins_a /= RUNS; 
-        q_a /= RUNS; 
-        m_a /= RUNS;
-        h_a /= RUNS;
+        ins_a /= RUNS;                        // 計算 Insertion 平均時間
+        q_a /= RUNS;                          // 計算 Quick 平均時間
+        m_a /= RUNS;                          // 計算 Merge 平均時間
+        h_a /= RUNS;                          // 計算 Heap 平均時間
+        cout << setw(6) << n << " | "         // 輸出
 
-        cout << setw(6) << n << " | "
-            << fixed << setprecision(4)
-            << setw(8) << ins_b << setw(9) << ins_a << setw(9) << ins_w << " | "
-            << setw(8) << q_b << setw(9) << q_a << setw(9) << q_w << " | "
-            << setw(8) << m_b << setw(9) << m_a << setw(9) << m_w << " | "
-            << setw(8) << h_b << setw(9) << h_a << setw(9) << h_w << "\n";
+            << fixed << setprecision(4)       // 小數點四位
+
+            << setw(8) << ins_b
+            << setw(9) << ins_a
+            << setw(9) << ins_w << " | "
+
+            << setw(8) << q_b
+            << setw(9) << q_a
+            << setw(9) << q_w << " | "
+
+            << setw(8) << m_b
+            << setw(9) << m_a
+            << setw(9) << m_w << " | "
+
+            << setw(8) << h_b
+            << setw(9) << h_a
+            << setw(9) << h_w << "\n";       // 輸出各排序時間
     }
-    return 0;
+
+    return 0;                                 
 }
