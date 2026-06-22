@@ -52,7 +52,7 @@
 #include <iomanip>       
 #include <string>        
 
-using namespace std;     
+using namespace std;
 
 // (a) Insertion Sort
 void insertionSort(vector<int>& a) {          // 插入排序函式
@@ -131,12 +131,42 @@ void mergeSort(vector<int>& a) {
 }
 
 // (d) Heap Sort
+void heapify(vector<int>& a, int i, int n) {
+    int largest = i;       // 先假設自己（爸爸）最大
+    int left = 2 * i + 1;  // 左小孩子的索引
+    int right = 2 * i + 2; // 右小孩子的索引
+
+    // 如果左小孩在範圍內，且值大於目前的 largest
+    if (left < n && a[left] > a[largest]) {
+        largest = left;
+    }
+
+    // 如果右小孩在範圍內，且值大於目前的 largest
+    if (right < n && a[right] > a[largest]) {
+        largest = right;
+    }
+
+    // 如果最大的不是爸爸，代表需要交換，並繼續向下調整
+    if (largest != i) {
+        swap(a[i], a[largest]);
+
+        // 遞迴調整受到影響的子樹
+        heapify(a, largest, n);
+    }
+}
 
 void heapSort(vector<int>& a) {
+    int n = a.size();
+    // 從最後一個擁有小孩子的節點 (n/2 - 1) 開始，倒著往上做 heapify
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        heapify(a, i, n);
+    }
 
-    make_heap(a.begin(), a.end());            // 建立最大堆疊
-
-    sort_heap(a.begin(), a.end());            // 堆疊排序
+    // 每次把樹根（索引 0，最大值）換到目前堆積的最後面，然後把堆積範圍減 1，重新調整樹根
+    for (int i = n - 1; i > 0; i--) {
+        swap(a[0], a[i]);   // 把最大值丟到後面排好
+        heapify(a, 0, i);   // 重新調整樹根，注意這時有效邊界變成了 i
+    }
 }
 
 // 隨機打亂資料
@@ -174,7 +204,7 @@ int main() {
         << " | " << setw(8) << "Best" << setw(9) << "Avg" << setw(9) << "Worst"
         << " | " << setw(8) << "Best" << setw(9) << "Avg" << setw(9) << "Worst" << "\n";
 
-    cout << string(125, '-') << "\n";          
+    cout << string(125, '-') << "\n";
 
     for (int n : n_values) {                   // 逐一測試各種資料量
         vector<int> data;                      // 儲存測試資料
@@ -236,7 +266,7 @@ int main() {
 
 // 平均情況 Average Case
 
-        for (int i = 0; i < RUNS; i++) {     
+        for (int i = 0; i < RUNS; i++) {
             permute(data, n);                 // 產生隨機排列資料
             vector<int> temp;                 // 暫存資料a
             temp = data;                      // 複製資料
@@ -286,7 +316,7 @@ int main() {
             << setw(9) << h_w << "\n";       // 輸出各排序時間
     }
 
-    return 0;                                 
+    return 0;
 }
 ```
 
