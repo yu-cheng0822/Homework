@@ -70,23 +70,29 @@ void insertionSort(vector<int>& a) {          // 插入排序函式
 
 // (b) Quick Sort
 
-int partition(vector<int>& a, int low, int high) { // 分割函式
+int partition(vector<int>& a, int low, int high) {
+    // 1. 找出中點
+    int mid = low + (high - low) / 2;
 
-    int randomIndex = low + rand() % (high - low + 1); // 隨機選 Pivot
+    // 2. 將 low, mid, high 三個位置的數排序，讓中位數跑到 mid
+    if (a[low] > a[mid]) swap(a[low], a[mid]);
+    if (a[low] > a[high]) swap(a[low], a[high]);
+    if (a[mid] > a[high]) swap(a[mid], a[high]);
 
-    swap(a[randomIndex], a[high]);            // Pivot 換到最後面
+    // 3. 把位於 mid 的中位數（Pivot）換到最後面（high），配合你原本的掃描邏輯
+    swap(a[mid], a[high]);
 
-    int pivot = a[high], i = low - 1;         // pivot值，i記錄較小元素區域
+    int pivot = a[high];
+    int i = low - 1; // 記錄較小元素區域
 
-    for (int j = low; j < high; j++) {        // 掃描區間
-
-        if (a[j] <= pivot)                    // 若元素小於等於 pivot
-            swap(a[++i], a[j]);               // 放到左側區域
+    for (int j = low; j < high; j++) {
+        if (a[j] <= pivot) {
+            swap(a[++i], a[j]); // 放到左側區域
+        }
     }
 
-    swap(a[i + 1], a[high]);                  // Pivot 放回正確位置
-
-    return i + 1;                             // 回傳 Pivot 位置
+    swap(a[i + 1], a[high]); // Pivot 放回正確位置
+    return i + 1;            // 回傳 Pivot 位置
 }
 
 void quickSort(vector<int>& a, int low, int high) {
@@ -124,7 +130,6 @@ void mergeSort(vector<int>& a) {
     }
 }
 
-
 // (d) Heap Sort
 
 void heapSort(vector<int>& a) {
@@ -143,7 +148,7 @@ void permute(vector<int>& a, int n) {
     for (int i = 0; i < n; i++)               // 產生 1~n
         a[i] = i + 1;
 
-    for (int i = n - 1; i > 0; i--) {         
+    for (int i = n - 1; i > 0; i--) {         // Fisher-Yates Shuffle
 
         swap(a[i], a[rand() % (i + 1)]);      // 隨機交換
     }
