@@ -42,16 +42,26 @@ void quickSort(vector<int>& a, int low, int high) {
 
 // (c) Merge
 void mergeSort(vector<int>& a) {
-    if (a.size() <= 1) return;
-    int mid = a.size() / 2;
-    vector<int> left(a.begin(), a.begin() + mid);
-    vector<int> right(a.begin() + mid, a.end());
 
-    mergeSort(left);
-    mergeSort(right);
+    int n = a.size();
 
-    merge(left.begin(), left.end(), right.begin(), right.end(), a.begin());
+    // w 代表目前要合併的子陣列長度 每次乘以 2 (1, 2, 4, 8...)
+    for (int w = 1; w < n; w *= 2) {
+
+        // 兩兩合併區間[i, i + w - 1] 和 [i + w, i + 2*w - 1]
+        for (int i = 0; i < n; i += 2 * w) {
+            int low = i;
+            int mid = min(i + w, n);
+            int high = min(i + 2 * w, n);
+
+            // inplace_merge 會自動將兩個相鄰的已排序區間 (low, mid) 與 (mid, high) 合併
+            if (mid < high) {
+                inplace_merge(a.begin() + low, a.begin() + mid, a.begin() + high);
+            }
+        }
+    }
 }
+
 
 // (d) Heap Sort
 void heapSort(vector<int>& a) {
