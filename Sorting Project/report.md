@@ -294,7 +294,7 @@ int main() {
 
 | 測試案例 |項目  |輸入資料量  | 輸出  |
 |---------|-----|--------|----------|
-| 測試 1  |Visual Studio 2019 |數據量 (n) = 500, 1000, 2000, 3000, 4000, 5000 | <img width="1641" height="411" alt="image" src="https://github.com/user-attachments/assets/5816b14a-9a56-47de-a255-1b9eb1fb0f0e" /> |
+| 測試 1  |Visual Studio 2026 |數據量 (n) = 500, 1000, 2000, 3000, 4000, 5000 | <img width="1547" height="372" alt="image" src="https://github.com/user-attachments/assets/19131dab-121c-4f79-9c6c-03999f4c2132" />|
 | 測試 2  |Online C++ |數據量 (n) = 500, 1000, 2000, 3000, 4000, 5000 | <img width="1411" height="357" alt="image" src="https://github.com/user-attachments/assets/545cf42a-372c-49bd-b83e-4c53808e0dcd" /> |
 
 ## 效能分析
