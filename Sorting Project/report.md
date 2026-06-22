@@ -105,24 +105,25 @@ void quickSort(vector<int>& a, int low, int high) {
 
 void mergeSort(vector<int>& a) {
 
-    if (a.size() <= 1) return;                // 長度1直接返回
+    int n = a.size();
 
-    int mid = a.size() / 2;                   // 找中點
+    // w 代表目前要合併的子陣列長度 每次乘以 2 (1, 2, 4, 8...)
+    for (int w = 1; w < n; w *= 2) {
 
-    vector<int> left(a.begin(), a.begin() + mid); // 左半部
+        // 兩兩合併區間[i, i + w - 1] 和 [i + w, i + 2*w - 1]
+        for (int i = 0; i < n; i += 2 * w) {
+            int low = i;
+            int mid = min(i + w, n);
+            int high = min(i + 2 * w, n);
 
-    vector<int> right(a.begin() + mid, a.end());  // 右半部
-
-    mergeSort(left);                          // 遞迴排序左半部
-
-    mergeSort(right);                         // 遞迴排序右半部
-
-    merge(
-        left.begin(), left.end(),            
-        right.begin(), right.end(),           
-        a.begin()                             // 合併回原陣列
-    );
+            // inplace_merge 會自動將兩個相鄰的已排序區間 (low, mid) 與 (mid, high) 合併
+            if (mid < high) {
+                inplace_merge(a.begin() + low, a.begin() + mid, a.begin() + high);
+            }
+        }
+    }
 }
+
 
 // (d) Heap Sort
 
@@ -142,7 +143,7 @@ void permute(vector<int>& a, int n) {
     for (int i = 0; i < n; i++)               // 產生 1~n
         a[i] = i + 1;
 
-    for (int i = n - 1; i > 0; i--) {         // Fisher-Yates Shuffle
+    for (int i = n - 1; i > 0; i--) {         
 
         swap(a[i], a[rand() % (i + 1)]);      // 隨機交換
     }
